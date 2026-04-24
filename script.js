@@ -1,6 +1,8 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+const gridSize = 20;
+
 // Snake setup
 let snake = [{ x: 200, y: 200 }];
 let dx = 0;
@@ -12,14 +14,14 @@ let changingDirection = false;
 // Score
 let score = 0;
 
-// Generate food safely (NOT on snake)
+// Generate food safely (NOT on snake + correct grid)
 function generateFood() {
   let newFood;
 
   while (true) {
     newFood = {
-      x: Math.floor(Math.random() * (canvas.width / 20)) * 20,
-      y: Math.floor(Math.random() * (canvas.height / 20)) * 20
+      x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
+      y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize
     };
 
     let collision = snake.some(part => part.x === newFood.x && part.y === newFood.y);
@@ -37,27 +39,26 @@ document.addEventListener("keydown", e => {
   if (changingDirection) return;
 
   if (e.key === "ArrowUp" && dy === 0) {
-    dx = 0; dy = -20;
+    dx = 0; dy = -gridSize;
   } else if (e.key === "ArrowDown" && dy === 0) {
-    dx = 0; dy = 20;
+    dx = 0; dy = gridSize;
   } else if (e.key === "ArrowLeft" && dx === 0) {
-    dx = -20; dy = 0;
+    dx = -gridSize; dy = 0;
   } else if (e.key === "ArrowRight" && dx === 0) {
-    dx = 20; dy = 0;
+    dx = gridSize; dy = 0;
   }
 
   changingDirection = true;
 });
 
 function draw() {
-  // Reset direction lock
   changingDirection = false;
 
   // Background
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // If game not started → just draw
+  // Wait for first key press
   if (dx === 0 && dy === 0) {
     drawElements();
     return;
@@ -79,10 +80,10 @@ function draw() {
     snake.pop();
   }
 
-  // Wall collision (FIXED)
+  // ✅ FIXED boundary (grid aligned)
   if (
-    head.x < 0 || head.x >= canvas.width ||
-    head.y < 0 || head.y >= canvas.height
+    head.x < 0 || head.x > canvas.width - gridSize ||
+    head.y < 0 || head.y > canvas.height - gridSize
   ) {
     alert("Game Over");
     document.location.reload();
@@ -96,23 +97,22 @@ function draw() {
     }
   }
 
-  // Draw everything
   drawElements();
 }
 
-// Drawing function
+// Draw everything
 function drawElements() {
   // Snake
   ctx.fillStyle = "white";
   snake.forEach(part => {
-    ctx.fillRect(part.x, part.y, 20, 20);
+    ctx.fillRect(part.x, part.y, gridSize, gridSize);
   });
 
   // Food
   ctx.fillStyle = "yellow";
-  ctx.fillRect(food.x, food.y, 20, 20);
+  ctx.fillRect(food.x, food.y, gridSize, gridSize);
 
-  // Scoreboard
+  // Score
   ctx.fillStyle = "white";
   ctx.font = "20px Arial";
   ctx.fillText("Score: " + score, 10, 25);
