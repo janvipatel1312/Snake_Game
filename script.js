@@ -29,7 +29,9 @@ document.addEventListener("keydown", e => {
 });
 
 function draw() {
-  ctx.clearRect(0, 0, 600, 600);
+  // Black background (clears screen)
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, 600, 600);
 
   // Move snake
   let head = {
@@ -37,7 +39,10 @@ function draw() {
     y: snake[0].y + dy
   };
 
-  snake.unshift(head);
+  // Prevent movement before key press
+  if (dx !== 0 || dy !== 0) {
+    snake.unshift(head);
+  }
 
   // Food collision
   if (head.x === food.x && head.y === food.y) {
@@ -78,10 +83,10 @@ function draw() {
   ctx.fillStyle = "yellow";
   ctx.fillRect(food.x, food.y, 20, 20);
 
-  // Draw score
+  // Draw score (must redraw every frame)
   ctx.fillStyle = "white";
   ctx.font = "20px Arial";
-  ctx.fillText("Score: " + score, 10, 20);
+  ctx.fillText("Score: " + score, 10, 25);
 }
 
 // Game loop
