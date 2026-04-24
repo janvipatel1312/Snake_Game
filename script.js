@@ -3,18 +3,24 @@ const ctx = canvas.getContext("2d");
 
 const gridSize = 20;
 
+// ✅ FULLSCREEN CANVAS (grid aligned)
+function resizeCanvas() {
+  canvas.width = Math.floor(window.innerWidth / gridSize) * gridSize;
+  canvas.height = Math.floor(window.innerHeight / gridSize) * gridSize;
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
 // Snake setup
 let snake = [{ x: 200, y: 200 }];
 let dx = 0;
 let dy = 0;
 
-// Prevent fast reverse
 let changingDirection = false;
-
-// Score
 let score = 0;
 
-// Generate food safely (NOT on snake + correct grid)
+// ✅ Generate food safely
 function generateFood() {
   let newFood;
 
@@ -58,7 +64,7 @@ function draw() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Wait for first key press
+  // Wait for start
   if (dx === 0 && dy === 0) {
     drawElements();
     return;
@@ -80,7 +86,7 @@ function draw() {
     snake.pop();
   }
 
-  // ✅ FIXED boundary (grid aligned)
+  // ✅ Grid-aligned boundary
   if (
     head.x < 0 || head.x > canvas.width - gridSize ||
     head.y < 0 || head.y > canvas.height - gridSize
