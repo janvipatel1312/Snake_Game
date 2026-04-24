@@ -6,17 +6,36 @@ let snake = [{ x: 200, y: 200 }];
 let dx = 0;
 let dy = 0;
 
+// Prevent fast reverse
+let changingDirection = false;
+
 // Score
 let score = 0;
 
-// Food
-let food = {
-  x: Math.floor(Math.random() * 30) * 20,
-  y: Math.floor(Math.random() * 30) * 20
-};
+// Generate food safely (NOT on snake)
+function generateFood() {
+  let newFood;
+
+  while (true) {
+    newFood = {
+      x: Math.floor(Math.random() * 30) * 20,
+      y: Math.floor(Math.random() * 30) * 20
+    };
+
+    let collision = snake.some(part => part.x === newFood.x && part.y === newFood.y);
+
+    if (!collision) break;
+  }
+
+  return newFood;
+}
+
+let food = generateFood();
 
 // Controls
 document.addEventListener("keydown", e => {
+  if (changingDirection) return;
+
   if (e.key === "ArrowUp" && dy === 0) {
     dx = 0; dy = -20;
   } else if (e.key === "ArrowDown" && dy === 0) {
@@ -26,9 +45,14 @@ document.addEventListener("keydown", e => {
   } else if (e.key === "ArrowRight" && dx === 0) {
     dx = 20; dy = 0;
   }
+
+  changingDirection = true;
 });
 
 function draw() {
+  // Reset direction lock
+  changingDirection = false;
+
   // Background
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, 600, 600);
@@ -50,11 +74,7 @@ function draw() {
   // Food collision
   if (head.x === food.x && head.y === food.y) {
     score++;
-
-    food = {
-      x: Math.floor(Math.random() * 30) * 20,
-      y: Math.floor(Math.random() * 30) * 20
-    };
+    food = generateFood();
   } else {
     snake.pop();
   }
@@ -80,7 +100,7 @@ function draw() {
   drawElements();
 }
 
-// Separate drawing function (VERY IMPORTANT)
+// Drawing function
 function drawElements() {
   // Snake
   ctx.fillStyle = "white";
