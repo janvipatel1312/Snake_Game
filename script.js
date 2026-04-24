@@ -18,8 +18,8 @@ function generateFood() {
 
   while (true) {
     newFood = {
-      x: Math.floor(Math.random() * 30) * 20,
-      y: Math.floor(Math.random() * 30) * 20
+      x: Math.floor(Math.random() * (canvas.width / 20)) * 20,
+      y: Math.floor(Math.random() * (canvas.height / 20)) * 20
     };
 
     let collision = snake.some(part => part.x === newFood.x && part.y === newFood.y);
@@ -55,7 +55,7 @@ function draw() {
 
   // Background
   ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, 600, 600);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // If game not started → just draw
   if (dx === 0 && dy === 0) {
@@ -79,10 +79,10 @@ function draw() {
     snake.pop();
   }
 
-  // Wall collision
+  // Wall collision (FIXED)
   if (
-    head.x < 0 || head.x >= 600 ||
-    head.y < 0 || head.y >= 600
+    head.x < 0 || head.x >= canvas.width ||
+    head.y < 0 || head.y >= canvas.height
   ) {
     alert("Game Over");
     document.location.reload();
