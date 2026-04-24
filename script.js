@@ -1,7 +1,7 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-let snake = [{x: 300, y: 300}];
+let snake = [{x: 280, y: 280}];
 let dx = 20;
 let dy = 0;
 
